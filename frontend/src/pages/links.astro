@@ -1,0 +1,94 @@
+---
+import '../styles/global.css';
+
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro'; // Correct layout import
+
+// Fetch all link entries using the standard structure
+const allLinks: CollectionEntry<'links'>[] = await getCollection('links');
+
+// Calculate tag frequencies
+const tagCounts: Record<string, number> = {};
+allLinks.forEach((link) => {
+	// Access tags via link.data.tags
+	if (link.data.tags) {
+		// Add safety check for tags
+		link.data.tags.forEach((tag: string) => {
+			tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+		});
+	}
+});
+
+// Create a sorted list of unique tags based on frequency
+const sortedTags = Object.entries(tagCounts)
+	.sort(([, countA], [, countB]) => countB - countA) // Sort descending by count
+	.map(([tag]) => tag); // Get just the tag names
+
+// Group links by tag for easier rendering
+const linksByTag: Record<string, CollectionEntry<'links'>[]> = {};
+sortedTags.forEach((tag) => {
+	// Filter using tags via link.data.tags
+	linksByTag[tag] = allLinks.filter((link) => link.data.tags?.includes(tag));
+});
+
+const pageTitle = 'Curated Links';
+---
+
+<Layout pageTitle={pageTitle}>
+	<div class="container mx-auto px-4 py-8 max-w-4xl">
+		<h1 class="text-2xl font-bold mb-2 text-gray-800">{pageTitle}</h1>
+		<p class="text-gray-600 mb-8">Links grouped by tag frequency.</p>
+
+		{
+			sortedTags.length > 0 ? (
+				<div class="space-y-6">
+					{sortedTags.map((tag) => (
+						<section class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+							<header class="px-4 py-3 bg-gray-50 border-b border-gray-200">
+								<h2 class="text-lg font-semibold text-gray-700 capitalize">
+									#{tag}
+									<span class="ml-2 text-sm font-normal text-gray-500">
+										({tagCounts[tag]} link{tagCounts[tag] !== 1 ? 's' : ''})
+									</span>
+								</h2>
+							</header>
+							<ul class="divide-y divide-gray-200">
+								{linksByTag[tag].map((link: CollectionEntry<'links'>) => (
+									<li class="px-4 py-4 hover:bg-gray-50 transition-colors duration-150">
+										<div class="flex items-center justify-between">
+											<a
+												href={link.data.url}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="text-base font-medium text-blue-600 hover:text-blue-800 hover:underline truncate"
+											>
+												{link.data.title || 'Untitled Link'}
+											</a>
+											{/* Optional: Add an ellipsis or actions here later */}
+										</div>
+										{link.data.summary && (
+											<p class="text-sm text-gray-600 mt-1 line-clamp-2">
+												{link.data.summary}
+											</p>
+										)}
+										<div class="mt-2 flex flex-wrap gap-1">
+											{link.data.tags?.map((t: string) => (
+												<span class="inline-block bg-blue-100 text-blue-800 rounded-full px-2.5 py-0.5 text-xs font-medium">
+													{t}
+												</span>
+											))}
+										</div>
+									</li>
+								))}
+							</ul>
+						</section>
+					))}
+				</div>
+			) : (
+				<div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 text-center">
+					<p class="text-gray-500">No links found.</p>
+				</div>
+			)
+		}
+	</div>
+</Layout>
