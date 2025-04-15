@@ -1,0 +1,42 @@
+{
+	"name": "debateclub-firecrawled",
+	"version": "0.1.0",
+	"main": "dist/index.js",
+	"scripts": {
+		"dev": "node --watch src/index.ts",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "node esbuild.config.js"
+	},
+	"bin": {
+		"debateclub": "./src/cli.ts"
+	},
+	"keywords": [],
+	"author": "ff6347 <hash@ff6347.email>",
+	"license": "MIT",
+	"description": "",
+	"type": "module",
+	"dependencies": {
+		"@mendable/firecrawl-js": "1.23.9",
+		"@supabase/supabase-js": "2.45.0",
+		"cheerio": "1.0.0-rc.12",
+		"glob": "11.0.1",
+		"marked": "13.0.2",
+		"openai": "4.58.1",
+		"p-limit": "5.0.0",
+		"remark": "15.0.1",
+		"remark-gfm": "4.0.1",
+		"remark-parse": "11.0.0",
+		"unist-util-visit": "5.0.0"
+	},
+	"devDependencies": {
+		"@types/node": "22.14.1",
+		"@types/p-limit": "2.1.0",
+		"esbuild": "0.25.2",
+		"oxlint": "0.16.6",
+		"tabtab": "3.0.2",
+		"typescript": "5.8.3"
+	},
+	"engines": {
+		"node": ">=23.0.0"
+	}
+}

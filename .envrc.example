@@ -1,0 +1,22 @@
+# Example environment variables for the Markdown Link Crawler
+
+# Optional: Required if using a non-local/authenticated Firecrawl instance
+# export FIRECRAWL_API_KEY=
+
+# Optional: Defaults to Firecrawl's default if not set. Example shows local instance.
+export FIRECRAWL_API_URL="http://localhost:3002"
+
+# Required: URL for your Supabase project's Postgrest endpoint.
+export SUPABASE_URL="http://localhost:54321"
+
+# Required: The anonymous public key for your Supabase project.
+export SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
+
+# Required for summarization feature using OpenAI.
+export OPENAI_API_KEY="YOUR_OPENAI_API_KEY"
+
+# Optional: Defaults to http://localhost:11434 if not set
+# export OLLAMA_BASE_URL=
+
+# Required for summarization feature
+# export OLLAMA_MODEL=

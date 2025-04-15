@@ -1,0 +1,29 @@
+{
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules", "dist"],
+	"compilerOptions": {
+		"allowImportingTsExtensions": true,
+		"rewriteRelativeImportExtensions": true,
+
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"sourceMap": true,
+		"declaration": true,
+		"declarationMap": true,
+		"types": ["node"],
+		"removeComments": false,
+		"skipLibCheck": true,
+		"target": "ESNext",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"exactOptionalPropertyTypes": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noUncheckedIndexedAccess": true
+	}
+}

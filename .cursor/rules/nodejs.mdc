@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Node.js
+
+- You can find the current nodejs version in @.node-version
+- Nodejs can run typescript by using type stripping
+- Nodejs can use sqlite using 'node:sqlite' module. Look at https://nodejs.org/api/sqlite.html for the API

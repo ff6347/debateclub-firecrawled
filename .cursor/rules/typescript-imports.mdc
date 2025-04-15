@@ -1,0 +1,45 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Use `.ts` Extension for Relative Imports
+
+## Introduction / Problem
+
+When using Node.js with ECMAScript Modules (ESM) and TypeScript (often configured with `"module": "NodeNext"` or similar in `tsconfig.json`), Node.js requires explicit file extensions in relative import paths. TypeScript's compiler needs to know the intended extension to correctly map the import during compilation and ensure Node.js can find the file at runtime.
+
+This rule enforces that all relative imports within the `src` directory *must* include the `.ts` extension.
+
+## Pattern Description
+
+Always append `.ts` to relative module specifiers.
+
+**Correct:**
+
+```typescript
+import { someFunction } from './utils.ts';
+import { MyComponent } from '../components/MyComponent.ts';
+import { Database } from './database.ts';
+```
+
+**Incorrect:**
+
+```typescript
+// These will likely cause runtime errors or TS errors depending on config
+import { someFunction } from './utils';
+import { MyComponent } from '../components/MyComponent.js';
+import { Database } from '@/database'; // Path aliases are fine, but direct relative paths need the extension.
+```
+
+## Rationale
+
+*   **Node.js ESM Compatibility:** Ensures that the compiled JavaScript works correctly when run with Node.js in ESM mode.
+*   **Clarity:** Makes the specific file being imported explicit.
+*   **TypeScript Configuration:** Aligns with modern TypeScript module resolution settings like `NodeNext` or `Node16`.
+
+## Common Pitfalls
+
+*   Forgetting the `.ts` extension on relative paths.
+*   Incorrectly adding `.js` (unless you are importing compiled JavaScript, which is not the standard practice in this project's source).
+*   This rule applies to *relative* paths (`./`, `../`). Path aliases defined in `tsconfig.json` (like `@/*`) typically do *not* require the extension in the import statement itself, as TypeScript resolves them during compilation.

@@ -1,0 +1,48 @@
+# Use `npm install` to Manage Dependencies
+
+## Problem
+
+Manually editing `package.json` to add or update dependencies can lead to inconsistencies, particularly with the `package-lock.json` file, and may not correctly resolve transitive dependencies.
+
+## Preferred Method
+
+Always use the `npm` command-line tool to add, remove, or update dependencies. This ensures that `package.json` and `package-lock.json` are updated correctly and consistently.
+
+**Adding a runtime dependency:**
+
+```bash
+npm install <package-name>
+```
+
+**Adding a development dependency:**
+
+```bash
+npm install <package-name> --save-dev
+# or
+npm install <package-name> -D
+```
+
+**Updating dependencies:**
+
+```bash
+npm update
+# or specific package
+npm update <package-name>
+```
+
+**Removing a dependency:**
+
+```bash
+npm uninstall <package-name>
+```
+
+## Anti-Pattern
+
+Avoid directly editing the `dependencies` or `devDependencies` sections within the `package.json` file by hand as a way to add or manage packages.
+
+## Why?
+
+*   **Consistency:** Ensures both `package.json` and `package-lock.json` are synchronized.
+*   **Transitive Dependencies:** npm handles the resolution and installation of dependencies required by the packages you install.
+*   **Script Execution:** npm might run install scripts associated with packages, which manual editing bypasses.
+*   **Version Locking:** Correctly updates the lock file, which is crucial for reproducible builds (especially when using `npm ci`).
