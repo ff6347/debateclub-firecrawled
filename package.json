@@ -1,7 +1,7 @@
 {
 	"name": "debateclub-firecrawled",
 	"version": "0.1.0",
-	"main": "dist/index.js",
+	"main": "dist/cli.js",
 	"scripts": {
 		"dev": "node src/cli.ts",
 		"test": "echo \"Error: no test specified\" && exit 1",
