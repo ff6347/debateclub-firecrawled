@@ -1,0 +1,71 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Destructured Object Parameters
+
+## Rule
+
+Functions that accept more than one parameter **must** be refactored to accept a single object argument. Use destructuring within the function signature to access the individual properties (parameters).
+
+## Rationale
+
+Using a single object parameter with destructuring offers several advantages:
+
+1.  **Readability:** Parameter names are explicit at the call site (`myFunc({ name: 'foo', count: 5 })` vs `myFunc('foo', 5)`).
+2.  **Maintainability:** Adding, removing, or reordering parameters doesn't change the call signature, reducing the chance of errors. Default values are also easier to manage.
+3.  **Type Safety (TypeScript):** Works seamlessly with TypeScript interfaces or types defined for the parameter object.
+4.  **Flexibility:** Callers only need to provide the properties they care about (especially if combined with default values or optional properties in the type).
+
+## Examples
+
+### Bad (Avoid)
+
+```typescript
+function processUserData(
+  userId: string,
+  name: string,
+  email: string | undefined,
+  isActive: boolean,
+  retryCount: number = 0
+): void {
+  // ... function body ...
+  console.log(name, isActive, retryCount);
+}
+
+// Call site is less clear, relies on parameter order
+processUserData(usr.id, usr.name, usr.email, true);
+```
+
+### Good (Prefer)
+
+```typescript
+interface ProcessUserDataParams {
+  userId: string;
+  name: string;
+  email?: string; // Optional property
+  isActive: boolean;
+  retryCount?: number; // Optional, defaults below
+}
+
+function processUserData({
+  userId,
+  name,
+  email,
+  isActive,
+  retryCount = 0 // Default value handled during destructuring
+}: ProcessUserDataParams): void {
+  // ... function body ...
+  console.log(name, isActive, retryCount);
+}
+
+// Call site is explicit and order doesn't matter
+processUserData({ userId: usr.id, name: usr.name, isActive: true, email: usr.email });
+processUserData({ userId: other.id, name: other.name, isActive: false }); // email and retryCount use defaults/undefined
+```
+
+## Exceptions
+
+*   Very simple, widely understood functions where order is conventional (e.g., `add(a, b)`). Use judgment, but lean towards the object pattern for most functions, especially those part of an internal or public API.
+*   Functions adhering to specific external library signatures (e.g., React component props, event handlers).
