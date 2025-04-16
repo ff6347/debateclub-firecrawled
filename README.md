@@ -4,7 +4,7 @@ Tired of markdown files turning into link graveyards? This tool breathes life ba
 
 Think of it as your personal web librarian and summarizer for all those interesting links scattered across your notes.
 
-(Actually this scratches my own itch for work at HBK-BS to provide the students with some links for our upcoming AI debateclub event.)
+(Actually this scratches my own itch for work at HBK-BS to provide the students with some links for our upcoming AI debateclub event. See the frontend code over here: https://github.com/ff6347/debateclub-fe and the deployed site there 👉🏾 https://debateclub.inpyjamas.dev)
 
 ## Features 🚀
 
