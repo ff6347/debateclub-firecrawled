@@ -1,166 +1,187 @@
 #!/usr/bin/env node
-import { parseArgs } from 'node:util';
-import { createSupabaseClient } from './supabase-client.ts';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from './database.ts'; // Also use .js here
-import { extractLinks } from './extract.ts';
-import { scrapePendingLinks } from './scrape.ts'; // Import the scrape function
-import { summarizePendingContent } from './summarize.ts'; // Import summarize function
-
+import { parseArgs } from "node:util";
+import { createSupabaseClient } from "./supabase-client.ts";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "./database.ts";
+import { extractLinks } from "./extract.ts";
+import { scrapePendingLinks } from "./scrape.ts";
+import { summarizePendingContent } from "./summarize.ts";
 
 const options = {
-	'source-dir': { type: 'string', short: 's', default: './source-files' },
-	'supabase-url': { type: 'string', short: 'd', default: 'http://localhost:54321' }, // Note: We'll likely switch to DB connection string later for Supabase
-	'firecrawl-api-url': { type: 'string' }, // Default handled by Firecrawl client or env var
-	'ollama-base-url': { type: 'string' }, // Default handled by env var or http://localhost:11434
-	'ollama-model': { type: 'string' }, // Default handled by env var, required if not skipping summary
-	concurrency: { type: 'string', default: '5' }, // Parse as string, convert to number later
-	'skip-extraction': { type: 'boolean', default: false },
-	'skip-crawl': { type: 'boolean', default: false },
-	'skip-summary': { type: 'boolean', default: false },
-	'reset-db': { type: 'boolean', default: false }, // Note: May need rethinking for Supabase migrations
-	help: { type: 'boolean', short: 'h' },
-} as const; // Use 'as const' for stricter type checking if needed, though parseArgs types might be sufficient
+	"source-dir": { type: "string", short: "s", default: "./source-files" },
+	"ollama-base-url": { type: "string" },
+	"openai-model": { type: "string", default: "gpt-4.1-nano" },
+	concurrency: { type: "string", default: "5" },
+	"skip-extraction": { type: "boolean", default: false },
+	"skip-crawl": { type: "boolean", default: false },
+	"skip-summary": { type: "boolean", default: false },
+	help: { type: "boolean", short: "h" },
+} as const;
 
 function printHelp() {
-	console.log(`Usage: node src/cli.ts [options]
+	console.log(`Usage: npx debateclub [options]
 
+Environment Variables:
+  SUPABASE_URL         (Required) URL to Supabase project
+  SUPABASE_SERVICE_ROLE_KEY    (Required) Supabase service role key
+  FIRECRAWL_API_KEY    (Required if not running locally) Firecrawl API key
+  FIRECRAWL_API_URL    (Optional) Firecrawl API base URL (defaults to https://api.firecrawl.dev)
+  OPENAI_API_KEY       (Required) OpenAI API key
+  OPENAI_MODEL         (Optional) OpenAI model name (defaults to gpt-4.1-nano)
 Options:
   -s, --source-dir <path>      Path to source markdown files (default: ./source-files)
-  -d, --supabase-url <url>     URL to Supabase Postgrest API (default: env SUPABASE_URL)
-      --firecrawl-api-url <url> Firecrawl API URL (default: env FIRECRAWL_API_URL or library default)
-      --concurrency <number>   Max concurrent crawls/summaries (default: 5)
+      --ollama-base-url <url>  Ollama base URL (overrides env var)
+      --ollama-model <model>   Ollama model name (overrides env var)
+      --concurrency <number>   Max concurrent operations (default: 5)
       --skip-extraction        Skip finding and adding new links
       --skip-crawl             Skip crawling pending links
       --skip-summary           Skip summarizing crawled content
-      --reset-db               Delete and recreate the database [Note: May change for Supabase]
-  -h, --help                   Display this help message
+      --help, -h               Display this help message
 `);
 	process.exit(0);
 }
 
 async function main() {
-	let values: ReturnType<typeof parseArgs<{ options: typeof options }>>['values'];
+	let values: ReturnType<
+		typeof parseArgs<{ options: typeof options }>
+	>["values"];
 	try {
-		// Explicitly provide the options type argument to parseArgs
 		const args = parseArgs({
 			options,
-			allowPositionals: false, // No positional arguments expected
-			strict: true, // Throw on unknown options
+			allowPositionals: false,
+			strict: true,
 		});
 		values = args.values;
 	} catch (err: any) {
 		console.error(`Argument parsing error: ${err.message}`);
-		console.log('Run with --help for usage information.');
+		console.log("Run with --help for usage information.");
 		process.exit(1);
 	}
 
 	if (values.help) {
 		printHelp();
-		process.exit(0);
 	}
 
-	console.log('Parsed CLI arguments:', values);
+	console.log("Validating arguments and environment variables...");
 
-	// --- Placeholder for future logic ---
-
-	// 1. Validate args/env vars (e.g., ollama-model if needed, database connection)
-	console.log('Validating arguments and environment variables...');
-
-	const supabaseUrl = values['supabase-url'] || process.env['SUPABASE_URL'];
-	const supabaseAnonKey = process.env['SUPABASE_ANON_KEY']; // No CLI arg for this
+	const supabaseUrl = process.env["SUPABASE_URL"] ?? "http://localhost:54321";
+	const supabaseServiceRoleKey = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+	const supabaseAnonKey = process.env["SUPABASE_ANON_KEY"];
+	const firecrawlApiKey = process.env["FIRECRAWL_API_KEY"];
+	const firecrawlApiUrl = process.env["FIRECRAWL_API_URL"];
+	const openaiModel = values["openai-model"] ?? process.env["OPENAI_MODEL"];
 
 	if (!supabaseUrl) {
-		console.error('Error: --supabase-url argument or SUPABASE_URL environment variable is required.');
-		process.exit(1);
+		console.error("Error: SUPABASE_URL environment variable is required.");
+		printHelp();
+	}
+	if (!supabaseServiceRoleKey) {
+		console.error(
+			"Error: SUPABASE_SERVICE_ROLE_KEY environment variable is required.",
+		);
+		printHelp();
 	}
 	if (!supabaseAnonKey) {
-		console.error('Error: SUPABASE_ANON_KEY environment variable is required.');
-		process.exit(1);
+		console.error("Error: SUPABASE_ANON_KEY environment variable is required.");
+		printHelp();
 	}
 
-	const concurrency = parseInt(values.concurrency ?? '5', 10);
+	if (!firecrawlApiUrl) {
+		console.error("Error: FIRECRAWL_API_URL environment variable is required.");
+		printHelp();
+	}
+	if (!firecrawlApiUrl?.includes("localhost") && !firecrawlApiKey) {
+		console.error(
+			"Error: FIRECRAWL_API_KEY environment variable is required when FIRECRAWL_API_URL is not localhost.",
+		);
+		printHelp();
+	}
+
+	const concurrency = parseInt(values.concurrency ?? "5", 10);
 	if (isNaN(concurrency) || concurrency < 1) {
-		console.error(`Invalid concurrency value: ${values.concurrency}. Must be a positive integer.`);
-		process.exit(1);
+		console.error(
+			`Invalid concurrency value: ${values.concurrency}. Must be a positive integer.`,
+		);
+		printHelp();
 	}
-	console.log('Validation successful.');
 
-	// 2. Initialize DB connection (Supabase client)
-	console.log('Initializing Supabase client...');
-	let supabase: SupabaseClient<Database>; // Explicitly type the client
+	console.log("Args and environment variables validated successfully.");
+
+	console.log("Testing Supabase connection...");
+	let supabase: SupabaseClient<Database>;
 	try {
-		supabase = createSupabaseClient(supabaseUrl, supabaseAnonKey);
-		// Test connection with a simple query
-		console.log('Testing Supabase connection...');
-		const { error: testError } = await supabase.from('links').select('id').limit(1);
-		if (testError) {
-			// Don't throw if table doesn't exist yet, but log other errors
-			if (testError.code !== '42P01') { // 42P01: undefined_table
-				throw new Error(`Supabase connection test failed: ${testError.message}`);
-			}
-			console.log('Supabase connection ok, but \'links\' table might not exist yet.');
-		} else {
-			console.log('Supabase connection successful.');
+		if (!supabaseUrl || !supabaseServiceRoleKey) {
+			console.error(
+				"Critical Error: Supabase URL or Key is undefined despite passing validation.",
+			);
+			process.exit(1);
 		}
+		supabase = createSupabaseClient({ supabaseUrl, supabaseServiceRoleKey });
+		console.log("Testing Supabase connection...");
+		const { error: testError } = await supabase
+			.from("links")
+			.select("id", { count: "exact", head: true });
+		if (testError && testError.code !== "42P01") {
+			throw new Error(`Supabase connection test failed: ${testError.message}`);
+		}
+		console.log("Supabase connection successful (or table doesn't exist yet).");
 	} catch (error: any) {
-		console.error(`Error initializing Supabase client or testing connection: ${error.message}`);
+		console.error(
+			`Error initializing Supabase client or testing connection: ${error.message}`,
+		);
 		process.exit(1);
 	}
 
-	// 3. If !skip-extraction: Run link extraction
-	if (!values['skip-extraction']) {
-		console.log('Starting link extraction...');
+	if (!values["skip-extraction"]) {
+		console.log("Starting link extraction...");
 		try {
-			await extractLinks(values['source-dir']!, supabase);
-			console.log('Link extraction completed.');
+			await extractLinks({ sourceDir: values["source-dir"]!, supabase });
+			console.log("Link extraction completed.");
 		} catch (error: any) {
 			console.error(`Error during link extraction: ${error.message}`);
-			// Optionally exit, or let subsequent steps proceed if desired
-			// process.exit(1);
 		}
 	} else {
-		console.log('Skipping link extraction.');
+		console.log("Skipping link extraction.");
 	}
 
-	// 4. If !skip-crawl: Run scraping
-	if (!values['skip-crawl']) {
-		console.log('Starting scraping...');
+	if (!values["skip-crawl"]) {
+		console.log("Starting scraping...");
 		try {
-			// Get Firecrawl params from args or env
-			const firecrawlApiKey = values['firecrawl-api-url'] || process.env['FIRECRAWL_API_KEY'];
-			const firecrawlApiUrl = values['firecrawl-api-url'] || process.env['FIRECRAWL_API_URL'];
-			await scrapePendingLinks(supabase, concurrency, firecrawlApiKey, firecrawlApiUrl);
-			console.log('Scraping completed.');
+			const scrapeParams = {
+				supabase,
+				concurrency,
+				firecrawlApiUrl: firecrawlApiUrl!,
+				...(firecrawlApiKey && { firecrawlApiKey: firecrawlApiKey }),
+			};
+			await scrapePendingLinks(scrapeParams);
+			console.log("Scraping completed.");
 		} catch (error: any) {
 			console.error(`Error during scraping: ${error.message}`);
-			// Optionally exit
-			// process.exit(1);
 		}
 	} else {
-		console.log('Skipping scraping.');
+		console.log("Skipping scraping.");
 	}
 
-	// 5. If !skip-summary: Run summarization
-	if (!values['skip-summary']) {
-		console.log('Starting summarization...');
-		try {
-			// Call summarizePendingContent without Ollama parameters
-			await summarizePendingContent(supabase, concurrency);
-			console.log('Summarization completed.');
-		} catch (error: any) {
-			console.error(`Error during summarization: ${error.message}`);
-			// Optionally exit
-			// process.exit(1);
+	if (!values["skip-summary"]) {
+		console.log("Starting summarization...");
+		if (!openaiModel) {
+			console.error("Ollama model not configured, cannot summarize.");
+		} else {
+			try {
+				await summarizePendingContent(supabase, concurrency, openaiModel);
+				console.log("Summarization completed.");
+			} catch (error: any) {
+				console.error(`Error during summarization: ${error.message}`);
+			}
 		}
 	} else {
-		console.log('Skipping summarization.');
+		console.log("Skipping summarization.");
 	}
 
-	console.log('CLI execution finished.'); // Updated final message
+	console.log("Execution finished.");
 }
 
 main().catch((error) => {
-	console.error('Unhandled error in main execution:', error);
+	console.error("Unhandled error in main execution:", error);
 	process.exit(1);
 });
