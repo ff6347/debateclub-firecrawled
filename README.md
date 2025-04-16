@@ -4,15 +4,17 @@ Tired of markdown files turning into link graveyards? This tool breathes life ba
 
 Think of it as your personal web librarian and summarizer for all those interesting links scattered across your notes.
 
+(Actually this scratches my own itch for work at HBK-BS to provide the students with some links for our upcoming AI debateclub event.)
+
 ## Features 🚀
 
-* **Link Extraction:** Scans markdown files in a specified directory for `http/https` links.
+* **Link Extraction:** Scans text files in a specified directory for `http/https` links.
 * **Metadata Scraping:** Uses [Firecrawl](https://firecrawl.dev/) to fetch not just the markdown content of linked pages, but also metadata like title, description, keywords, and Open Graph image URLs.
 * **AI Summarization:** Leverages the OpenAI API to generate concise summaries of the crawled content.
 * **Intelligent Tagging:** Queries OpenAI for relevant tags, intelligently suggesting existing tags from your database first, and only adding a limited number of new ones if necessary.
 * **Database Storage:** Persists link data, scraped content, metadata, summaries, and tags in a Supabase (PostgreSQL) database using a structured schema (`links`, `tags`, `link_tags` tables).
 * **Concurrency Control:** Uses `p-limit` to manage concurrent scraping and summarization tasks gracefully.
-* **CLI Interface:** Simple command-line operation with flags to control different stages of the process.
+* **CLI Interface:** Command-line operation with flags to control different stages of the process.
 
 ## Tech Stack 🔧
 
@@ -30,7 +32,7 @@ Think of it as your personal web librarian and summarizer for all those interest
 * Access to a Supabase project (local or cloud)
 * **Note:** The default configuration (`.envrc.example` & CLI defaults) assumes a **local** Supabase instance is running (via Supabase CLI).
 * An OpenAI API Key
-* (Optional) A Firecrawl API Key/Instance URL if not using the free tier or default endpoint.
+* (Optional) A Firecrawl API Key/Instance URL if not using the free tier or default endpoint or running your own instance.
 * **Note:** The default configuration assumes a **local** Firecrawl instance is running at `http://localhost:3002` if `FIRECRAWL_API_URL` is not set.
 
 ## Installation & Setup ⚙️
@@ -46,7 +48,7 @@ Think of it as your personal web librarian and summarizer for all those interest
   ```
 3.  **Set up Environment Variables:**
   * Copy the example file: `cp .envrc.example .envrc`
-  * Edit `.envrc` and fill in your actual `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `OPENAI_API_KEY`. Add `FIRECRAWL_API_KEY` or `FIRECRAWL_API_URL` if needed.
+  * Edit `.envrc` and fill in your actual `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and `OPENAI_API_KEY`. Add `FIRECRAWL_API_KEY` or `FIRECRAWL_API_URL` if needed.
   * Run your local Firecrawl instance: `docker compose up -d`. See [Firecrawl Docs Self-Host](https://github.com/mendableai/firecrawl/blob/main/SELF_HOST.md) for more details.
   * Run your local Supabase instance: `supabase start`.
   * The default values in `.envrc.example` likely point to local instances for Supabase and Firecrawl.
