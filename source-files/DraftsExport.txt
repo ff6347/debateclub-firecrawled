@@ -1,0 +1,182 @@
+What are AI Agents? why do they matter? - by Addy Osmani
+https://addyo.substack.com/p/what-are-ai-agents-why-do-they-matter?utm_source=tldrwebdev
+https://posthuman.blog/this-reddit-post-fried-my-brain/?utm_source=tldrwebdev
+A Reddit Bot Drove Me Insane | Post-Human Posting
+[New Vulnerability in GitHub Copilot and Cursor: How Hackers Can Weaponize Code Agents](https://www.pillar.security/blog/new-vulnerability-in-github-copilot-and-cursor-how-hackers-can-weaponize-code-agents)
+
+> 
+[Everything Wrong with MCP - by Shrivu Shankar](https://blog.sshh.io/p/everything-wrong-with-mcp)
+
+> 
+LLMs can't stop making up software dependencies and sabotaging everything • The Register
+https://www.theregister.com/AMP/2025/04/12/ai_code_suggestions_sabotage_supply_chain/?ck_subscriber_id=1673104834
+Our vision for accelerating creativity and productivity with agentic AI | Adobe Blog
+https://blog.adobe.com/en/publish/2025/04/09/our-vision-for-accelerating-creativity-productivity-with-agentic-ai?utm_source=tldrai
+Our vision for accelerating creativity and productivity with agentic AI | Adobe Blog
+https://blog.adobe.com/en/publish/2025/04/09/our-vision-for-accelerating-creativity-productivity-with-agentic-ai?utm_source=tldrai
+OmniSVG: A Unified Scalable Vector Graphics Generation Model
+https://omnisvg.github.io/
+[Fintech founder charged with fraud after 'AI' shopping app found to be powered by humans in the Philippines | TechCrunch](https://techcrunch.com/2025/04/10/fintech-founder-charged-with-fraud-after-ai-shopping-app-found-to-be-powered-by-humans-in-the-philippines/)
+
+> 
+tobi lutke on X: "I heard this internal memo of mine is being leaked right now, so here it is: https://t.co/Qn12DY7TFF" / X
+https://x.com/tobi/status/1909231499448401946
+
+**Quote** 2025-04-07
+
+> _**Using Al effectively is now a fundamental expectation of everyone at Shopify**. It's a tool of all trades today, and will only grow in importance. Frankly, I don't think it's feasible to opt out of learning the skill of applying Al in your craft; you are welcome to try, but I want to be honest I cannot see this working out today, and definitely not tomorrow. Stagnation is almost certain, and stagnation is slow-motion failure. If you're not climbing, you're sliding [...]   
+  
+**We will add Al usage questions to our performance and peer review questionnaire**. Learning to use Al well is an unobvious skill. My sense is that a lot of people give up after writing a prompt and not getting the ideal thing back immediately. Learning to prompt and load context is important, and getting peers to provide feedback on how this is going will be valuable._
+
+Tobias Lütke, CEO of Shopify, self-leaked memo
+[AI masters Minecraft: DeepMind program finds diamonds without being taught](https://www.nature.com/articles/d41586-025-01019-w)
+
+> 
+AI 2027
+https://ai-2027.com/?utm_source=tldrnewsletter
+[An image of an archeologist adventurer who wears a hat and uses a bullwhip](https://theaiunderwriter.substack.com/p/an-image-of-an-archeologist-adventurer)
+
+> 
+Thread by @lxeagle17 on Thread Reader App – Thread Reader App
+https://threadreaderapp.com/thread/1899979401460371758.html?utm_source=tldrwebdev
+What Mattered in GenAI in 2024 - by James Wang
+https://weightythoughts.com/p/what-mattered-in-genai-in-2024?utm_source=tldrnewsletter
+What I've learned about writing AI apps so far
+https://seldo.com/posts/what-ive-learned-about-writing-ai-apps-so-far
+[Stone Soup AI](https://simons.berkeley.edu/news/stone-soup-ai)
+
+> 
+Grok 3 appears to have briefly censored unflattering mentions of Trump and Musk | TechCrunch
+https://techcrunch.com/2025/02/23/grok-3-appears-to-have-briefly-censored-unflattering-mentions-of-trump-and-musk/?utm_source=tldrai
+[I put my heart and soul into this AI but nobody cares](https://newslttrs.com/i-put-my-heart-and-soul-into-this-ai-but-nobody-cares/)
+
+> 
+Models on-device | Ai2
+https://allenai.org/on-device
+pradyuprasad.com
+https://pradyuprasad.com/writings/how-to-have-a-career-even-when-o3-drops/?utm_source=tldrnewsletter
+Add F*cking to Your Google Searches to Neutralize AI Summaries
+https://gizmodo.com/add-fcking-to-your-google-searches-to-neutralize-ai-summaries-2000557710
+[Chatbot Software Begins to Face Fundamental Limitations | Quanta Magazine](https://www.quantamagazine.org/chatbot-software-begins-to-face-fundamental-limitations-20250131/)
+
+> During the training phase, an LLM is shown a fragment of a sentence with the last word obscured (though technically it isn’t always a single word). The model predicts the missing information and then “learns” from its mistakes.
+Could Inflicting Pain Test AI for Sentience? | Scientific American
+https://www.scientificamerican.com/article/could-inflicting-pain-test-ai-for-sentience/?utm_source=tldrai
+Writers vs. AI: Microsoft Study Reveals How GPT-4 Impacts Creativity and Voice
+https://www.techtimes.com/articles/309091/20250115/writers-vs-ai-microsoft-study-reveals-how-gpt-4-impacts-creativity-voice.htm
+https://podcasts.apple.com/de/podcast/radio-citylab-berlin/id1576330013?i=1000683314830
+https://nmn.gl/blog/ai-illiterate-programmers
+
+AI is Creating a Generation of Illiterate Programmers. Jan 24, 2025. A couple of days ago, Cursor went down during the ... 
+
+The article "AI is Creating a Generation of Illiterate Programmers" presents several key insights regarding the impact of AI on programming skills:
+
+- **Dependency on AI**: Developers are increasingly relying on AI tools, leading to a decline in their coding skills and problem-solving abilities.
+- **Neglect of Documentation**: Many programmers have stopped reading documentation, opting instead for instant explanations from AI.
+- **Reduced Debugging Skills**: The ease of obtaining solutions from AI has diminished the ability to debug effectively, with many developers bypassing error messages entirely.
+- **Loss of Deep Understanding**: Instant solutions from AI replace the learning experience that comes from grappling with coding challenges, resulting in superficial knowledge.
+- **Emotional Frustration**: The reliance on AI has shifted the emotional experience of programming, where developers now feel frustration when AI does not provide quick solutions.
+- **AI's Role in Development**: While AI can enhance productivity, it may also contribute to a lack of genuine programming skills among developers.
+- **No-AI Days**: The author proposes implementing "No-AI Days" to encourage developers to engage deeply with their work, such as reading error messages and writing code from scratch.
+- **Rules for AI Usage**: Suggestions include understanding problems independently before consulting AI, reading AI-suggested solutions thoroughly, and focusing on learning patterns rather than just immediate fixes.
+- **Concerns for New Programmers**: New developers may miss out on the satisfaction and understanding that comes from solving problems independently, leading to a generation that can query AI but lacks fundamental skills.
+- **Future Implications**: As AI capabilities improve, the concern is not about AI replacing programmers but rather the potential self-replacement of programmers who become too dependent on AI tools.
+DeepSeek My User Agent
+https://www.jasonthorsness.com/20
+What I've learned about writing AI apps so far | Seldo.com
+https://seldo.com/posts/what-ive-learned-about-writing-ai-apps-so-far
+[ZADZMO code](https://zadzmo.org/code/nepenthes/)
+
+> 
+Stupidly Easy Hack Can Jailbreak Even the Most Advanced AI Chatbots
+https://futurism.com/the-byte/easy-hack-jailbreak-ai-chatbot
+DiffSensei: Bridging Multi-Modal LLMs and Diffusion Models for Customized Manga Generation
+https://jianzongwu.github.io/projects/diffsensei/
+Mark Zuckerberg gave Meta's Llama team the OK to train on copyrighted works, filing claims | TechCrunch
+https://techcrunch.com/2025/01/09/mark-zuckerberg-gave-metas-llama-team-the-ok-to-train-on-copyrighted-works-filing-claims/?utm_source=tldrai
+Mark Zuckerberg gave Meta's Llama team the OK to train on copyrighted works, filing claims | TechCrunch
+https://techcrunch.com/2025/01/09/mark-zuckerberg-gave-metas-llama-team-the-ok-to-train-on-copyrighted-works-filing-claims/?utm_source=tldrai
+You Must See How Far AI Video Has Come - by Alberto Romero
+https://www.thealgorithmicbridge.com/p/you-must-see-how-far-ai-video-has?utm_source=tldrai
+
+
+# Computing inside an AI | Will Whitney
+
+> What would it mean to treat AI as a tool instead of a person?
+
+> I propose a new mode of interaction, where models play the role of computer (e.g. phone) applications: providing a graphical interface, interpreting user inputs, and updating their state. In this mode, instead of being an “agent” that uses a computer on behalf of the human, AI can provide a richer and more powerful computing environment for us to use.
+
+
+https://willwhitney.com/computing-inside-ai.html?utm_source=tldrai
+[Self Models of Loving Grace - media.ccc.de](https://media.ccc.de/v/38c3-self-models-of-loving-grace)
+
+> 
+https://www.theregister.com/2024/12/10/ai_slop_bug_reports/?utm_source=tldrnewsletter
+Open source projects drown in bad bug reports penned by AI • The Register
+The AI We Deserve - Boston Review
+https://www.bostonreview.net/forum/the-ai-we-deserve/?utm_source=tldrai
+[OpenAI's new ChatGPT o1 model will try to escape if it thinks it'll be shut down — then lies about it | Tom's Guide](https://www.tomsguide.com/ai/openais-new-chatgpt-o1-model-will-try-to-escape-if-it-thinks-itll-be-shut-down-then-lies-about-it)
+
+> 
+[Try OmniGen AI Image Generator Free Online](https://aiomnigen.com/)
+
+> 
+[Ted Benson](https://edwardbenson.com/2024/10/google-ai-thinks-i-left-gatorade-on-the-moon)
+
+> 
+A discussion of discussions on AI bias
+https://danluu.com/ai-bias/
+[I am tired of AI | On Test Automation](https://www.ontestautomation.com/i-am-tired-of-ai/)
+
+> 
+Why AI can't spell 'strawberry' | TechCrunch
+https://techcrunch.com/2024/08/27/why-ai-cant-spell-strawberry/?utm_source=tldrai
+[Procreate defies AI trend, pledges “no generative AI” in its illustration app | Ars Technica](https://arstechnica.com/information-technology/2024/08/procreate-defies-ai-trend-pledges-no-generative-ai-in-its-illustration-app/)
+
+> 
+[When A.I.’s Output Is a Threat to A.I. Itself - The New York Times](https://www.nytimes.com/interactive/2024/08/26/upshot/ai-synthetic-data.html)
+
+> 
+Procreate’s anti-AI pledge attracts praise from digital creatives - The Verge
+https://www.theverge.com/2024/8/19/24223473/procreate-anti-generative-ai-pledge-digital-illustration-creatives
+[Research AI model unexpectedly modified its own code to extend runtime | Ars Technica](https://arstechnica.com/information-technology/2024/08/research-ai-model-unexpectedly-modified-its-own-code-to-extend-runtime/)
+
+> 
+We’ve got to talk about the environment when we talk about AI - The Hustle
+https://thehustle.co/news/we-ve-got-to-talk-about-the-environment-when-we-talk-about-ai?fbclid=PAZXh0bgNhZW0CMTEAAaZ56XYP4Wb_nTn-RxO3AEwDSeuAA--Wp9RZrhxT-8JyiB8bNYF3SEOfwvY_aem_C_cjAAxe2F6wWW17FY3k0A
+https://www.npr.org/2024/07/12/g-s1-9545/ai-brings-soaring-emissions-for-google-and-microsoft-a-major-contributor-to-climate-change
+Augmenting Intelligence - by Michael Woudenberg
+https://www.polymathicbeing.com/p/augmenting-intelligence?utm_source=tldrai
+Pop Culture
+https://www.wheresyoured.at/pop-culture/?utm_source=tldrai
+[How to Fix “AI’s Original Sin” – O’Reilly](https://www.oreilly.com/radar/how-to-fix-ais-original-sin/)
+
+> 
+Talkin’ ‘Bout AI Generation: Copyright and the Generative-AI Supply Chain by Katherine Lee, A. Feder Cooper, James Grimmelmann :: SSRN
+https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4523551
+[ChatGPT is biased against resumes with credentials that imply a disability — but it can improve | UW News](https://www.washington.edu/news/2024/06/21/chatgpt-ai-bias-ableism-disability-resume-cv/)
+
+> 
+[Office of Public Affairs | Justice Department Secures Groundbreaking Settlement Agreement with Meta Platforms, Formerly Known as Facebook, to Resolve Allegations of Discriminatory Advertising | United States Department of Justice](https://www.justice.gov/opa/pr/justice-department-secures-groundbreaking-settlement-agreement-meta-platforms-formerly-known)
+
+> 
+[White-sounding names get called for jobs more than Black ones, study finds : NPR](https://www.npr.org/2024/04/11/1243713272/resume-bias-study-white-names-black-names)
+
+> 
+[Unpacking AI Bias | BDO](https://www.bdodigital.com/insights/analytics/unpacking-ai-bias)
+
+> 
+[OpenAI’s chatbot store is filling up with spam | TechCrunch](https://techcrunch.com/2024/03/20/openais-chatbot-store-is-filling-up-with-spam/?guccounter=1)
+
+
+Midjourney Bans Stability From Using Its Images Without Permission https://futurism.com/the-byte/ai-company-bans-images-without-permission
+Stability AI Is Falling Apart https://futurism.com/the-byte/stability-ai-is-falling-apart
+[Introduction for the special issue of “Ideologies of AI and the consolidation of power”: Naming power | First Monday](https://firstmonday.org/ojs/index.php/fm/article/view/13643)
+
+> 
+OpenAI prepares to fight for its life as legal troubles mount
+https://www.msn.com/en-us/news/politics/openai-prepares-to-fight-for-its-life-as-legal-troubles-mount/ar-BB1lk4ei
+Beijing court’s ruling that AI-generated content can be covered by copyright eschews US stand, with far-reaching implications on tech’s use | South China Morning Post
+https://www.scmp.com/tech/tech-trends/article/3243570/beijing-courts-ruling-ai-generated-content-can-be-covered-copyright-eschews-us-stand-far-reaching?utm_source=tldrai
+Artists take new shot at Stability, Midjourney in updated copyright lawsuit | Reuters
+https://www.reuters.com/legal/litigation/artists-take-new-shot-stability-midjourney-updated-copyright-lawsuit-2023-11-30/

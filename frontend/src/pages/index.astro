@@ -1,11 +1,283 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import "../styles/global.css";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import { getCollection, type CollectionEntry } from "astro:content";
+import Layout from "../layouts/Layout.astro"; // Correct layout import
+
+// Fetch all link entries using the standard structure
+const allLinks: CollectionEntry<"links">[] = await getCollection("links");
+
+// Calculate tag frequencies
+const tagCounts: Record<string, number> = {};
+allLinks.forEach((link) => {
+	// Access tags via link.data.tags
+	if (link.data.tags) {
+		// Add safety check for tags
+		link.data.tags.forEach((tag: string) => {
+			tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+		});
+	}
+});
+
+// Create a sorted list of unique tags based on frequency
+const sortedTags = Object.entries(tagCounts)
+	.sort(([, countA], [, countB]) => countB - countA) // Sort descending by count
+	.map(([tag]) => tag); // Get just the tag names
+
+// Group links by tag for easier rendering
+const linksByTag: Record<string, CollectionEntry<"links">[]> = {};
+sortedTags.forEach((tag) => {
+	// Filter using tags via link.data.tags
+	linksByTag[tag] = allLinks.filter((link) => link.data.tags?.includes(tag));
+});
+
+const pageTitle = "curated list of";
 ---
 
-<Layout>
-	<Welcome />
+<style>
+	html {
+		height: 100%;
+	}
+	body {
+		height: 100%;
+	}
+	footer {
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+	}
+	a {
+		text-decoration: underline;
+		text-underline-offset: 0.1rem;
+	}
+
+	/* Hide filter bar by default */
+	#tag-filter-bar {
+		display: none;
+	}
+</style>
+
+<Layout pageTitle={pageTitle}>
+	<div class="container mx-auto px-4 py-8 max-w-7xl">
+		<h1 class="text-2xl font-bold mb-2 text-gray-800">{pageTitle}</h1>
+		<p class="text-gray-600 mb-6 tagline">things for the debate club</p>
+
+		<!-- Tag Filter Bar -->
+		{
+			sortedTags.length > 0 && (
+				<div class="mb-8 flex flex-wrap gap-2 items-center" id="tag-filter-bar">
+					<span class="text-sm font-medium text-gray-700 mr-2">
+						Filter by tag:
+					</span>
+					{sortedTags.map((tag) => (
+						<button
+							data-tag-count={tagCounts[tag]}
+							data-tag={tag}
+							class="tag-button text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-full px-3 py-1 transition-colors duration-150"
+						>
+							{tag} ({tagCounts[tag]})
+						</button>
+					))}
+				</div>
+			)
+		}
+
+		{
+			allLinks.length > 0 ? (
+				<div
+					class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+					id="link-card-grid"
+				>
+					{allLinks.map((link: CollectionEntry<"links">) => (
+						<article
+							class="link-card bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col"
+							data-tags={link.data.tags?.join(",") || ""}
+						>
+							<div class="flex-grow">
+								<a
+									href={link.data.url}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="text-base font-medium text-black underline mb-1 block"
+								>
+									{link.data.title || "Untitled Link"}
+								</a>
+								{link.data.summary && (
+									<p class="text-sm text-gray-600 mt-1 mb-2 line-clamp-3">
+										{link.data.summary}
+									</p>
+								)}
+							</div>
+							<div class="mt-auto pt-2">
+								<div class="flex flex-wrap gap-1">
+									{link.data.tags?.map((t: string) => (
+										<span class="inline-block bg-gray-100 text-gray-800 rounded-full px-2.5 py-0.5 text-xs font-medium">
+											{t}
+										</span>
+									))}
+								</div>
+							</div>
+						</article>
+					))}
+				</div>
+			) : (
+				<div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 text-center">
+					<p class="text-gray-500">No links found.</p>
+				</div>
+			)
+		}
+	</div>
+	<!-- TODO: add footer -->
+	<footer class="bg-gray-100 text-center py-4">
+		<p class="text-gray-600">
+			<a href="https://github.com/ff6347/debateclub-fe" style="color: #ff6347"
+				>source code</a
+			>
+			| built with ❤︎ by
+			<a href="https://github.com/ff6347" style="color: #ff6347">ff6347</a>
+		</p>
+	</footer>
 </Layout>
+
+<!-- Add Client-Side Script -->
+<script>
+	// REMOVE THIS ENTIRE DOMContentLoaded LISTENER BLOCK
+	// document.addEventListener("DOMContentLoaded", () => {
+	//   const filterBar = document.getElementById("tag-filter-bar");
+	//   const linkCards = document.querySelectorAll(".link-card");
+	//   const activeTags = new Set<string>();
+	//
+	//   if (!filterBar || linkCards.length === 0) {
+	//     return; // No tags or cards, nothing to filter
+	//   }
+	//
+	//   function updateCardVisibility() {
+	//     // ... implementation ...
+	//   }
+	//
+	//   filterBar.addEventListener("click", (event) => {
+	//     // ... implementation ...
+	//   });
+	//
+	//   // Initial display (show all cards)
+	//   updateCardVisibility();
+	// });
+
+	// KEEP THIS SCRIPT BLOCK BELOW FOR SIDEBAR DATA
+	function collectAndDispatchTags() {
+		console.log("Attempting to collect tags from DOM using data-tag-count...");
+		const buttons = document.querySelectorAll(
+			"button[data-tag][data-tag-count]",
+		); // Select buttons with both attributes
+		const uniqueTags: { [key: string]: number } = {};
+
+		buttons.forEach((button) => {
+			const htmlButton = button as HTMLElement;
+			const tagName = htmlButton.dataset.tag;
+			const tagCountStr = htmlButton.dataset.tagCount;
+
+			if (tagName && tagCountStr) {
+				// Ensure both attributes exist
+				// Only add/update if we haven't seen this tag name yet
+				// This assumes the first button encountered for a tag has the correct count
+				if (!(tagName in uniqueTags)) {
+					const tagCount = parseInt(tagCountStr, 10); // Parse count string to number
+					if (!isNaN(tagCount)) {
+						// Check if parsing was successful
+						uniqueTags[tagName] = tagCount;
+					} else {
+						console.warn(
+							`Could not parse tag count for ${tagName}: ${tagCountStr}`,
+						);
+					}
+				}
+			}
+		});
+
+		const tagsArray: { name: string; count: number }[] = Object.entries(
+			uniqueTags,
+		)
+			.map(([name, count]) => ({ name, count }))
+			.sort((a, b) => b.count - a.count); // Sort by the count we read
+
+		console.log("Collected tags from attributes:", tagsArray);
+
+		// Dispatch the custom event with the collected tags
+		document.dispatchEvent(
+			new CustomEvent("tags-updated", { detail: tagsArray }),
+		);
+	}
+
+	// Listener for components requesting tags (in case they load after initial dispatch)
+	document.addEventListener("request-tags", () => {
+		console.log("Received request-tags event, dispatching tags again.");
+		collectAndDispatchTags();
+	});
+
+	// Run collection when the script loads (might be too early)
+	// collectAndDispatchTags();
+
+	// More robust: Run collection after the page is fully loaded
+	// or after a short delay to ensure buttons are rendered
+	if (document.readyState === "complete") {
+		console.log("Document already complete, collecting tags.");
+		collectAndDispatchTags();
+	} else {
+		window.addEventListener("load", () => {
+			console.log("Window loaded, collecting tags.");
+			collectAndDispatchTags();
+		});
+		// Or use a small timeout as a fallback if 'load' doesn't work reliably with islands
+		// setTimeout(collectAndDispatchTags, 100);
+	}
+
+	// --- NEW SCRIPT FOR FILTERING CARDS BASED ON SIDEBAR ---
+
+	let activeFilterTags: string[] = []; // Change to array
+	const linkCards = document.querySelectorAll(".link-card");
+
+	function updateCardVisibility(filterTags: string[]) {
+		// Accept array
+		console.log("Updating card visibility for filters:", filterTags);
+		linkCards.forEach((card) => {
+			const cardElement = card as HTMLElement; // Assert type
+			const cardTags = (cardElement.dataset.tags || "").split(",");
+
+			let isVisible = false;
+			if (filterTags.length === 0) {
+				// If filter array is empty, show all
+				isVisible = true;
+			} else {
+				// Check if card has AT LEAST ONE of the active filter tags
+				isVisible = cardTags.some((tag) => filterTags.includes(tag.trim())); // Trim whitespace just in case
+			}
+
+			if (isVisible) {
+				cardElement.classList.remove("hidden");
+			} else {
+				cardElement.classList.add("hidden");
+			}
+		});
+	}
+
+	// Listen for filter changes from the sidebar (expecting an array)
+	document.addEventListener("filter-change", ((
+		event: CustomEvent<string[]>,
+	) => {
+		// Expect string[]
+		activeFilterTags = event.detail || []; // Update array, default to empty if detail is null/undefined
+		updateCardVisibility(activeFilterTags);
+	}) as EventListener);
+
+	// Initial visibility check (show all)
+	if (
+		document.readyState === "interactive" ||
+		document.readyState === "complete"
+	) {
+		updateCardVisibility([]); // Pass empty array initially
+	} else {
+		document.addEventListener("DOMContentLoaded", () =>
+			updateCardVisibility([]),
+		); // Pass empty array initially
+	}
+</script>

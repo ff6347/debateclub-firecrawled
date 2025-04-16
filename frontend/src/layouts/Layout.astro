@@ -1,22 +1,57 @@
+---
+import "../styles/global.css";
+// Import necessary components
+import FilterIcon from "@/components/filter-icon";
+import { TagSidebar } from "@/components/TagSidebar";
+import { MobileSheetWrapper } from "@/components/MobileSheetWrapper";
+
+// Assume tags data is passed via props
+// You need to fetch/prepare this data in your page component
+// Remove tags prop extraction - no longer needed here
+// const { tags = [] } = Astro.props;
+---
+
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>ai | scraped | iv | debateclub</title>
+		<script is:inline>
+			(function () {
+				document.documentElement.classList.remove("no-js");
+			})();
+		</script>
 	</head>
 	<body>
-		<slot />
+		<div class="relative flex min-h-screen">
+			{/* Main Content Area - Removed mx-auto from here */}
+			<main class="flex-1 py-6 md:pr-[280px]">
+				{/* Mobile Header using the Wrapper Component */}
+				<div class="md:hidden flex justify-end mb-4 requires-js px-4 md:px-6">
+					<MobileSheetWrapper client:load />
+				</div>
+
+				<slot />
+			</main>
+
+			{/* Desktop Sidebar */}
+			<aside
+				class="hidden md:block fixed top-0 right-0 h-full w-[280px] border-l bg-background z-20 requires-js"
+			>
+				<TagSidebar client:load />
+			</aside>
+		</div>
+		<footer class="bg-gray-100 text-center py-4">
+			<p class="text-gray-600">
+				<a href="https://github.com/ff6347/debateclub-fe" style="color: #ff6347"
+					>source code</a
+				>
+				| built with ❤︎ by
+				<a href="https://github.com/ff6347" style="color: #ff6347">ff6347</a>
+			</p>
+		</footer>
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
