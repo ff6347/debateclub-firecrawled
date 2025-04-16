@@ -31,57 +31,69 @@ sortedTags.forEach((tag) => {
 	linksByTag[tag] = allLinks.filter((link) => link.data.tags?.includes(tag));
 });
 
-const pageTitle = 'Curated Links';
+const pageTitle = 'curated list of';
 ---
 
 <Layout pageTitle={pageTitle}>
-	<div class="container mx-auto px-4 py-8 max-w-4xl">
+	<div class="container mx-auto px-4 py-8 max-w-6xl">
 		<h1 class="text-2xl font-bold mb-2 text-gray-800">{pageTitle}</h1>
-		<p class="text-gray-600 mb-8">Links grouped by tag frequency.</p>
+		<p class="text-gray-600 mb-6 tagline">things for the debate club</p>
+
+		<!-- Tag Filter Bar -->
+		{
+			sortedTags.length > 0 && (
+				<div class="mb-8 flex flex-wrap gap-2 items-center" id="tag-filter-bar">
+					<span class="text-sm font-medium text-gray-700 mr-2">
+						Filter by tag:
+					</span>
+					{sortedTags.map((tag) => (
+						<button
+							data-tag={tag}
+							class="tag-button text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-full px-3 py-1 transition-colors duration-150"
+						>
+							{tag} ({tagCounts[tag]})
+						</button>
+					))}
+				</div>
+			)
+		}
 
 		{
-			sortedTags.length > 0 ? (
-				<div class="space-y-6">
-					{sortedTags.map((tag) => (
-						<section class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-							<header class="px-4 py-3 bg-gray-50 border-b border-gray-200">
-								<h2 class="text-lg font-semibold text-gray-700 capitalize">
-									#{tag}
-									<span class="ml-2 text-sm font-normal text-gray-500">
-										({tagCounts[tag]} link{tagCounts[tag] !== 1 ? 's' : ''})
-									</span>
-								</h2>
-							</header>
-							<ul class="divide-y divide-gray-200">
-								{linksByTag[tag].map((link: CollectionEntry<'links'>) => (
-									<li class="px-4 py-4 hover:bg-gray-50 transition-colors duration-150">
-										<div class="flex items-center justify-between">
-											<a
-												href={link.data.url}
-												target="_blank"
-												rel="noopener noreferrer"
-												class="text-base font-medium text-blue-600 hover:text-blue-800 hover:underline truncate"
-											>
-												{link.data.title || 'Untitled Link'}
-											</a>
-											{/* Optional: Add an ellipsis or actions here later */}
-										</div>
-										{link.data.summary && (
-											<p class="text-sm text-gray-600 mt-1 line-clamp-2">
-												{link.data.summary}
-											</p>
-										)}
-										<div class="mt-2 flex flex-wrap gap-1">
-											{link.data.tags?.map((t: string) => (
-												<span class="inline-block bg-blue-100 text-blue-800 rounded-full px-2.5 py-0.5 text-xs font-medium">
-													{t}
-												</span>
-											))}
-										</div>
-									</li>
-								))}
-							</ul>
-						</section>
+			allLinks.length > 0 ? (
+				<div
+					class="flex flex-wrap gap-4 justify-center md:justify-start"
+					id="link-card-grid"
+				>
+					{allLinks.map((link: CollectionEntry<'links'>) => (
+						<article
+							class="link-card bg-white border border-gray-200 rounded-lg shadow-sm p-4 w-full sm:w-[calc(50%-0.5rem)] md:w-[calc(33.333%-0.666rem)] lg:w-[calc(25%-0.75rem)] flex flex-col"
+							data-tags={link.data.tags?.join(',') || ''}
+						>
+							<div class="flex-grow">
+								<a
+									href={link.data.url}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="text-base font-medium text-black underline mb-1 block"
+								>
+									{link.data.title || 'Untitled Link'}
+								</a>
+								{link.data.summary && (
+									<p class="text-sm text-gray-600 mt-1 mb-2 line-clamp-3">
+										{link.data.summary}
+									</p>
+								)}
+							</div>
+							<div class="mt-auto pt-2">
+								<div class="flex flex-wrap gap-1">
+									{link.data.tags?.map((t: string) => (
+										<span class="inline-block bg-gray-100 text-gray-800 rounded-full px-2.5 py-0.5 text-xs font-medium">
+											{t}
+										</span>
+									))}
+								</div>
+							</div>
+						</article>
 					))}
 				</div>
 			) : (
@@ -92,3 +104,83 @@ const pageTitle = 'Curated Links';
 		}
 	</div>
 </Layout>
+
+<!-- Add Client-Side Script -->
+<script>
+	// Use DOMContentLoaded instead of astro:page-load
+	document.addEventListener('DOMContentLoaded', () => {
+		const filterBar = document.getElementById('tag-filter-bar');
+		const linkCards = document.querySelectorAll('.link-card');
+		const activeTags = new Set<string>();
+
+		if (!filterBar || linkCards.length === 0) {
+			return; // No tags or cards, nothing to filter
+		}
+
+		function updateCardVisibility() {
+			linkCards.forEach((card) => {
+				const cardTags = (card.getAttribute('data-tags') || '')
+					.split(',')
+					.filter((t) => t);
+				let isVisible = false;
+
+				if (activeTags.size === 0) {
+					isVisible = true; // Show all if no tags are active
+				} else {
+					isVisible = cardTags.some((tag) => activeTags.has(tag));
+				}
+
+				// Use Tailwind's `hidden` class for show/hide
+				if (isVisible) {
+					card.classList.remove('hidden');
+				} else {
+					card.classList.add('hidden');
+				}
+			});
+		}
+
+		filterBar.addEventListener('click', (event) => {
+			// Ensure the target is an HTMLElement
+			if (!(event.target instanceof HTMLElement)) {
+				return;
+			}
+			const target = event.target as HTMLElement;
+
+			// Check if the clicked element is a button inside the filter bar
+			if (target.tagName === 'BUTTON' && target.closest('#tag-filter-bar')) {
+				const tag = target.getAttribute('data-tag');
+				if (tag) {
+					if (activeTags.has(tag)) {
+						activeTags.delete(tag);
+						target.classList.remove(
+							'bg-blue-500',
+							'text-white',
+							'hover:bg-blue-600',
+						);
+						target.classList.add(
+							'bg-gray-100',
+							'text-gray-700',
+							'hover:bg-gray-200',
+						);
+					} else {
+						activeTags.add(tag);
+						target.classList.add(
+							'bg-blue-500',
+							'text-white',
+							'hover:bg-blue-600',
+						);
+						target.classList.remove(
+							'bg-gray-100',
+							'text-gray-700',
+							'hover:bg-gray-200',
+						);
+					}
+					updateCardVisibility();
+				}
+			}
+		});
+
+		// Initial display (show all cards)
+		updateCardVisibility();
+	});
+</script>
