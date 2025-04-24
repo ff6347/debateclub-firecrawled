@@ -1,11 +1,12 @@
 ---
 description: 
-globs: 
-alwaysApply: true
+globs: *.ts,*.js,*.mjs,*.cjs
+alwaysApply: false
 ---
+# Nodejs 
 
-# Node.js
+We are using node >= 23. See the .node-version for it. We have access to fetch. No need for node-fetch or whatever.
+If possible we use built in moduless.
 
-- You can find the current nodejs version in @.node-version
-- Nodejs can run typescript by using type stripping
-- Nodejs can use sqlite using 'node:sqlite' module. Look at https://nodejs.org/api/sqlite.html for the API
+We also can see the output by running scripts using `node --inspect <file.ts>`
+

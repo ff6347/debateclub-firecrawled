@@ -1,8 +1,7 @@
 ---
-title: Creating Effective Cursor Project Rules
-description: Comprehensive guidelines for creating well-structured Cursor Project Rules (.mdc files) to help AI understand your codebase and coding style.
+description: 
 globs: "**/*.{mdc}"
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Creating Effective Cursor Project Rules

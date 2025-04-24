@@ -1,0 +1,10 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Filenames
+
+Filenames should always be kebap-case
+

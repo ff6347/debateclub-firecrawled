@@ -1,0 +1,63 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Clean Up Dead Code Rule
+
+## Introduction / Problem
+
+During development, debugging, and refactoring, temporary code (like `console.log` statements) or commented-out blocks of old implementations often get left behind. This "dead code" reduces readability, can be confusing to future readers (including AI), and potentially hides outdated logic. This rule ensures such code is cleaned up promptly.
+
+## Pattern Description
+
+**Dead code** in this context includes, but is not limited to:
+
+*   Commented-out debugging statements (e.g., `// console.log(...)`, `# print(...)`).
+*   Commented-out blocks of code representing old approaches or experiments.
+*   Unused variables, functions, imports, or classes that remain after refactoring.
+*   Code explicitly marked with temporary markers like `// TODO: Remove this`.
+
+**Expectation:** Unless there's a specific, documented reason to keep commented-out code (e.g., as a temporary placeholder with a clear explanation), it should be removed once it's no longer actively needed for the current task or debugging session.
+
+## Implementation Steps
+
+1.  **Identify:** While working or upon completing a task/fix, review the changed files for any temporary or now-unused code segments.
+2.  **Evaluate:** Determine if the identified code is truly "dead" or serves a specific, documented purpose for being commented out.
+3.  **Remove:** Delete the dead code.
+4.  **Verify:** Ensure the removal doesn't introduce errors (e.g., removing an import that *was* actually still needed).
+
+## Examples
+
+**Before Cleanup:**
+
+```typescript
+function calculateTotal(items: Item[]): number {
+  let total = 0;
+  items.forEach(item => {
+    // console.log("Processing item:", item.name, item.price); // Dead debug log
+    total += item.price;
+  });
+  // Old implementation attempt:
+  // let total = items.reduce((sum, item) => sum + item.price, 0);
+  return total;
+}
+```
+
+**After Cleanup:**
+
+```typescript
+function calculateTotal(items: Item[]): number {
+  let total = 0;
+  items.forEach(item => {
+    total += item.price;
+  });
+  return total;
+}
+```
+
+## Common Pitfalls
+
+*   **Forgetting:** Simply forgetting to remove temporary logs or comments after debugging.
+*   **"Just in case":** Leaving commented-out code "just in case" it might be needed later. Version control (like Git) is the appropriate tool for retrieving old code, not comments. If code represents a valid alternative approach worth documenting, consider adding it to actual documentation or keeping it in a separate branch.
+*   **Ambiguous Comments:** Leaving commented code without explaining *why* it's commented out, leading to confusion. If it must stay temporarily, add a clear comment explaining the reason and when it should be addressed/removed.

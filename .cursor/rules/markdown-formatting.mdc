@@ -1,0 +1,77 @@
+---
+description:
+globs: *.md,*.mdc,*.markdown,*.mdown
+alwaysApply: false
+---
+# Markdown Formatting Rule
+
+This rule defines the standard formatting conventions for Markdown files within this project.
+
+## Bullet Points
+
+- Always use a hyphen (`-`) for unordered lists.
+- Ensure there is exactly one space after the hyphen.
+
+
+**Correct:**
+```markdown
+- Item 1
+- Item 2
+  - Sub-item A
+  - Sub-item B
+```
+
+**Incorrect:**
+```markdown
+* Item 1
+* Item 2
+
+-  Item 1 (too many spaces)
+-Item 2 (no space)
+```
+
+
+## Numberd Lists
+
+- Ensure there is exactly one space after the dot.
+
+
+**Correct:**
+```markdown
+1. Some text
+2. More text
+```
+
+**Incorrect:**
+```markdown
+1.  Some text
+2.  More text
+```
+## Code Blocks
+
+- Always use fenced code blocks (backticks) for code examples.
+- Specify the language identifier after the opening fence when possible.
+
+**Correct:**
+```markdown
+```javascript
+function hello() {
+  console.log("Hello, world!");
+}
+```
+```
+
+```markdown
+```bash
+npm install
+```
+```
+
+**Incorrect:**
+```markdown
+    Indented code block (don't use)
+
+```
+Plain code block without language identifier (use if language is unknown/irrelevant, but prefer specifying)
+```
+```

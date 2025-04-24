@@ -1,6 +1,7 @@
 ---
-description: 
+description: default shell is fish shell
 globs: 
+alwaysApply: false
 ---
 # Fish Shell Usage Standards
 

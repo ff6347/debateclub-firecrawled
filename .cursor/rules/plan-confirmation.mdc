@@ -1,0 +1,31 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Plan Confirmation Before Implementation
+
+## Introduction / Problem
+
+To ensure alignment and prevent unnecessary or incorrect work, the AI must confirm the proposed plan with the user before proceeding with implementation steps, particularly for tasks involving multiple code edits, complex logic changes, or potentially impactful commands.
+
+## Procedure
+
+1.  **Propose Plan:** For any non-trivial task, the AI will first outline a step-by-step plan.
+2.  **Seek Confirmation:** The AI will explicitly ask for user feedback or approval of the plan.
+3.  **Await Approval:** The AI will **not** use tools like `edit_file` or `run_terminal_cmd` to execute the plan's steps until the user confirms or provides adjustments.
+4.  **Proceed/Adjust:** Once confirmed, the AI will proceed with the agreed-upon plan. If adjustments are requested, the AI will modify the plan and seek confirmation again if necessary.
+
+## When This Rule Applies
+
+This rule is crucial when:
+
+*   The user requests a feature involving multiple files or components.
+*   The task requires refactoring or significant code changes.
+*   The AI needs to run terminal commands that modify the system or project state.
+*   The user explicitly asks for a plan first.
+
+## Exceptions
+
+*   Very simple, single-file edits where the user's request is unambiguous (e.g., "rename variable X to Y in this file").
+*   Read-only operations like file reading or searching, unless they are part of a larger plan being confirmed.
