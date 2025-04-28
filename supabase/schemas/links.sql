@@ -6,6 +6,7 @@ create table links (
 	keywords text [],
 	url text not null unique,
 	source_file text not null,
+	source_json json,
 	created_at timestamp with time zone default current_timestamp,
 	crawl_status text default 'pending' check (crawl_status in ('pending', 'success', 'failed')),
 	crawled_at timestamp with time zone,
