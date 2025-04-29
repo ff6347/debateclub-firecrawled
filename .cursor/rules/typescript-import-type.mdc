@@ -1,0 +1,67 @@
+---
+description:
+globs: *.ts,*.tsx
+alwaysApply: false
+---
+# Enforce TypeScript `import type`
+
+## Introduction / Problem
+
+TypeScript allows importing types alongside regular values using the standard `import` statement. However, mixing type and value imports in the same statement can sometimes lead to ambiguity or inadvertently cause runtime dependencies on type-only modules, especially with certain bundler or compiler configurations. Explicitly separating type imports using `import type` improves clarity and guarantees that the import is purely for type-checking purposes and will be erased during compilation, preventing potential runtime issues.
+
+## Pattern Description
+
+**Expectation:** Always use the `import type` syntax when importing types (interfaces, type aliases, enums intended only for type usage, etc.). If a file imports both types and values from the same module, use two separate import statements: one with `import type` for types and one standard `import` for values.
+
+## Implementation Steps
+
+1.  **Identify:** When adding or reviewing imports in a TypeScript file (`.ts`, `.tsx`).
+2.  **Separate:** If importing types, use the `import type { ... } from '...'` syntax.
+3.  **Split (if necessary):** If importing both types and values from the same module, split them into two distinct import statements.
+
+## Examples
+
+**Before:**
+
+```typescript
+// Importing both a type and a value
+import { SomeType, someFunction } from './module';
+import { AnotherType } from './another-module'; // Only a type is imported here
+
+function useStuff(value: SomeType): void {
+  someFunction();
+  let other: AnotherType = { /* ... */ };
+}
+```
+
+**After:**
+
+```typescript
+// Explicitly importing the type
+import type { SomeType, AnotherType } from './module';
+import { someFunction } from './module';
+
+function useStuff(value: SomeType): void {
+  someFunction();
+  let other: AnotherType = { /* ... */ };
+}
+```
+
+Or, if separating types from the *same* module:
+
+```typescript
+import type { SomeType } from './module'; // Type import
+import { someFunction } from './module'; // Value import
+import type { AnotherType } from './another-module'; // Type import
+
+function useStuff(value: SomeType): void {
+  someFunction();
+  let other: AnotherType = { /* ... */ };
+}
+```
+
+## Common Pitfalls
+
+*   **Forgetting:** Simply forgetting to add the `type` keyword when importing only types.
+*   **Mixing:** Keeping types and values mixed in a single import statement out of habit.
+*   **Over-applying:** Using `import type` for values (though TypeScript will usually catch this).
