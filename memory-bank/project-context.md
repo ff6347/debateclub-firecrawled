@@ -21,8 +21,8 @@ This turns a passive collection of links into an active, curated library.
 ## Intended User Experience
 
 The user (likely a developer or someone managing notes in markdown) should be able to:
-- Point the tool at a directory of their markdown files.
-- Run a simple command (`node src/cli.ts`).
+- Point the tool at their source files by providing *either* a path to markdown files (`--markdown-files`) or NDJSON files (`--ndjson-files`).
+- Run a simple command (`node src/cli.ts [arguments]`).
 - Have the tool automatically process all links found.
 - Access the enriched link data (content, summary, tags) through the Supabase database (presumably via a separate frontend or direct queries).
 - Control the processing steps (e.g., skip summarization) via CLI flags.
