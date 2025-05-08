@@ -1,7 +1,6 @@
-// ... existing code ...
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./database.ts";
-// import type { Link } from 'unist'; // Incorrect import
+import type { ExtractedLink } from "./types.ts";
 import type { Link } from "mdast"; // Correct type for markdown links
 
 import path from "node:path";
@@ -11,16 +10,34 @@ import remarkGfm from "remark-gfm";
 import { visit } from "unist-util-visit";
 import { glob } from "glob";
 import { readFile } from "node:fs/promises";
-import { createUniqueLinks, ExtractedLink, insertLinks } from "./common.ts";
-
+import {
+	createUniqueLinks,
+	insertLinks,
+	importTagsForLinks,
+} from "./common.ts";
+import { ndjsonExtract } from "./ndjson.ts";
 export async function extractLinks({
 	sourceDir,
 	supabase,
+	isMarkdownMode,
 }: {
 	sourceDir: string;
 	supabase: SupabaseClient<Database>;
+	isMarkdownMode: boolean;
 }) {
 	console.log(`Starting link extraction from: ${sourceDir}`);
+	let linksToInsert: ExtractedLink[] = [];
+	if (isMarkdownMode) {
+		linksToInsert = await markdownExtract(sourceDir);
+	} else {
+		linksToInsert = await ndjsonExtract(sourceDir);
+	}
+	await insertLinks(supabase, linksToInsert);
+	if (!isMarkdownMode) {
+		await importTagsForLinks(supabase, linksToInsert);
+	}
+}
+async function markdownExtract(sourceDir: string): Promise<ExtractedLink[]> {
 	const markdownFiles = await glob("**/*.{md,mdx,markdown,txt,html,mdc}", {
 		cwd: sourceDir,
 		absolute: true,
@@ -58,16 +75,18 @@ export async function extractLinks({
 	);
 
 	if (uniqueLinks.length > 0) {
-		console.log("Inserting links into the database...");
-		const linksToInsert = uniqueLinks.map((link) => ({
-			url: link.url,
-			source_file: link.sourceFile,
-			source_json: undefined,
-			// Default values for status etc. will be applied by the database
-		}));
+		const linksToInsert: ExtractedLink[] = uniqueLinks.map(
+			(link) =>
+				({
+					url: link.url,
+					sourceFile: link.sourceFile,
+					sourceJson: undefined,
+					// Default values for status etc. will be applied by the database
+				}) as unknown as ExtractedLink,
+		);
 
-		await insertLinks(supabase, linksToInsert);
+		return linksToInsert;
+	} else {
+		return [];
 	}
-
-	console.log("Link extraction finished.");
 }

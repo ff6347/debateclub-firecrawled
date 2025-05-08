@@ -3,18 +3,17 @@ import through from "through2";
 import split from "split2";
 import { EOL } from "os";
 import stringify from "json-stringify-safe";
-import fs from "fs";
+import fs from "fs"; // Needed for createReadStream
+import fsPromises from "fs/promises"; // Use promises version for readdir
 import { pipeline } from "stream/promises";
-import { createUniqueLinks, insertLinks } from "./common.ts";
-import type { ExtractedLink } from "./common.ts";
+import { createUniqueLinks } from "./common.ts";
+import type { ExtractedLink } from "./types.ts";
 import path from "path";
 import { remark } from "remark";
 import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
 import type { Link } from "mdast"; // Correct type for markdown links
 import { visit } from "unist-util-visit";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "./database.ts";
 
 interface ParseOptions {
 	strict?: boolean;
@@ -94,51 +93,100 @@ export async function readNdjson(
 	}
 }
 
-async function parseNDJson(
-	filePath: string,
-	supabase: SupabaseClient<Database>,
-) {
-	const rows = (await readNdjson(filePath)) as unknown as NDJsonRow[];
+async function ndjsonExtract(
+	directoryPath: string, // Changed parameter name
+): Promise<ExtractedLink[]> {
+	const allLinks: ExtractedLink[] = []; // Moved outside the loop
 
-	const allLinks: ExtractedLink[] = [];
+	try {
+		const dirents = await fsPromises.readdir(directoryPath, {
+			withFileTypes: true,
+		});
+		const ndjsonFiles = dirents
+			.filter((dirent) => dirent.isFile() && dirent.name.endsWith(".ndjson"))
+			.map((dirent) => path.join(directoryPath, dirent.name));
 
-	for (const row of rows) {
-		try {
-			const context = row.text;
-			const markdown = remark().use(remarkParse).use(remarkGfm).parse(context);
-			const sourceFileRelative = path.relative(process.cwd(), filePath); // Store relative path
-			visit(markdown, "link", (node: Link) => {
-				if (
-					node.url &&
-					(node.url.startsWith("http://") || node.url.startsWith("https://"))
-				) {
-					allLinks.push({
-						url: node.url,
-						sourceFile: sourceFileRelative,
-						sourceJson: JSON.stringify(row),
+		if (ndjsonFiles.length === 0) {
+			console.warn(
+				`[ndjson] No .ndjson files found in directory: ${directoryPath}`,
+			);
+			return [];
+		}
+
+		console.info(
+			`[ndjson] Found ${ndjsonFiles.length} .ndjson files to process in ${directoryPath}.`,
+		);
+
+		for (const filePath of ndjsonFiles) {
+			// Loop through found files
+			try {
+				// Inner try-catch for individual file processing
+				const rows = (await readNdjson(filePath)) as unknown as NDJsonRow[];
+				const sourceFileRelative = path.relative(process.cwd(), filePath); // Store relative path
+
+				for (const row of rows) {
+					const context = row.text;
+					// Consider adding a try-catch around remark parsing if needed
+					const markdown = remark()
+						.use(remarkParse)
+						.use(remarkGfm)
+						.parse(context);
+					visit(markdown, "link", (node: Link) => {
+						if (
+							node.url &&
+							(node.url.startsWith("http://") ||
+								node.url.startsWith("https://"))
+						) {
+							allLinks.push({
+								// Accumulate links
+								url: node.url,
+								sourceFile: sourceFileRelative,
+								sourceJson: JSON.stringify(row),
+							});
+						}
 					});
 				}
-			});
-		} catch (error) {
-			console.error(`[ndjson]: Error processing file ${filePath}: ${error}`);
-		}
+				console.info(`[ndjson] Successfully processed ${filePath}`);
+			} catch (error) {
+				console.error(`[ndjson] Error processing file ${filePath}:`, error); // Log specific file error
+				// Continue to the next file
+			}
+		} // End of loop for files
+	} catch (dirError) {
+		// Catch errors reading the directory itself
+		console.error(
+			`[ndjson] Error reading directory ${directoryPath}:`,
+			dirError,
+		);
+		// Stop processing if we can't read the directory
+		return [];
 	}
+
+	// Process accumulated links after the loop
 	const uniqueLinks = createUniqueLinks(allLinks);
 
 	console.info(
-		`[ndjson] Extracted ${uniqueLinks.length} unique HTTP/HTTPS links.`,
+		`[ndjson] Extracted ${uniqueLinks.length} unique HTTP/HTTPS links from all files in ${directoryPath}.`, // Updated log
 	);
 
 	if (uniqueLinks.length > 0) {
 		console.log("Inserting links into the database...");
-		const linksToInsert = uniqueLinks.map((link) => ({
-			url: link.url,
-			source_file: link.sourceFile,
-			source_json: link.sourceJson,
-		}));
+		const linksToInsert: ExtractedLink[] = uniqueLinks.map(
+			(link) =>
+				({
+					url: link.url,
+					sourceFile: link.sourceFile,
+					sourceJson: link.sourceJson,
+				}) as ExtractedLink,
+		);
 
-		await insertLinks(supabase, linksToInsert);
+		// Consider adding try-catch around insertLinks if needed
+		console.log("[ndjson] Finished inserting links.");
+		return linksToInsert;
+	} else {
+		console.log("[ndjson] No new links found to insert.");
+		return [];
 	}
 }
 
-export { stringifyFunc as stringify, parse, parseNDJson };
+export { stringifyFunc as stringify, parse, ndjsonExtract };

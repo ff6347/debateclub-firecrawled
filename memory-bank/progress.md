@@ -14,14 +14,17 @@
 
 ## What Works
 
-- The end-to-end pipeline (extract -> crawl -> summarize -> tag -> store) is functional.
+- The end-to-end pipeline (extract -> crawl -> summarize -> tag -> store) is functional for *markdown* sources.
+- **Refactored `ndjsonExtract`:** This function now correctly processes directories of `.ndjson` files and returns extracted links.
+- **Testing for `ndjsonExtract`:** Unit tests covering directory handling for NDJSON extraction are in place (`test/ndjson.test.ts`).
 - Configuration via `.envrc` and `direnv` is set up.
 - Local development workflow (`npm run dev`, `supabase gen types`) is defined.
 
 ## What's Left / Next Steps (Initial thoughts - needs refinement)
 
-- **Implement LDJSON Import:** Add functionality to import links/tags from Drafts.app LDJSON exports, including weighted summarization (see `active-context.md` for details).
-- **Testing:** No tests mentioned (`npm test` script exists but likely empty or placeholder). Comprehensive tests (unit, integration) are needed.
+- **Integrate `ndjsonExtract` results:** The main extraction logic (`src/extract.ts` likely) needs to call the refactored `ndjsonExtract` and handle inserting the returned links into the database.
+- **Implement NDJSON Import:** Add functionality to import links/tags from Drafts.app NDJSON exports, including weighted summarization (see `active-context.md` for details). This is now partially addressed by the `ndjsonExtract` refactor but needs full integration.
+- **Testing:** No tests mentioned (`npm test` script exists but likely empty or placeholder). Comprehensive tests (unit, integration) are needed *for the overall pipeline and markdown extraction*. Test coverage for `ndjsonExtract` has been added.
 - **Error Handling:** Robustness needs evaluation. How does it handle network errors, API failures, invalid links, large files, rate limits?
 - **Scalability/Performance:** Assess performance with a large number of links or large source files. Optimize concurrency settings.
 - **Schema Evolution:** How are database schema changes managed beyond the initial setup? (Migrations setup using Supabase CLI seems implied but not explicitly stated as fully implemented for *this tool's tables*).

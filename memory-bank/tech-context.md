@@ -67,7 +67,14 @@
 
 ## Development Workflow
 
-- **Run:** `node src/cli.ts [options]` (or `npm run dev`)
-- **Build:** `npm run build` (uses `esbuild.config.js`)
-- **DB Type Generation:** `supabase gen types --local > src/database.ts`
+- **CLI Arguments:**
+  - `--markdown-files <path>` OR `--ndjson-files <path>`: Path to input files (exactly one is required, mutually exclusive).
+  - `--skip-extraction`: Skip finding new links.
+  - `--skip-crawl`: Skip crawling pending links.
+  - `--skip-summary`: Skip summarizing crawled content.
+  - `--concurrency <number>`: Max concurrent operations (default: 5).
+  - `--help, -h`: Display help.
+- **Run:** `node src/cli.ts [arguments]` (or `npm run dev` which might not pass args).
+- **Build:** `npm run build` (uses `esbuild.config.js`).
+- **DB Type Generation:** `supabase gen types --local > src/database.ts`.
 - **Testing:** `npm test` (currently outputs an error message). 

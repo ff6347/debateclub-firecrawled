@@ -8,7 +8,8 @@ import { scrapePendingLinks } from "./scrape.ts";
 import { summarizePendingContent } from "./summarize.ts";
 
 const options = {
-	"source-dir": { type: "string", short: "s", default: "./source-files" },
+	"markdown-files": { type: "string", short: "m" },
+	"ndjson-files": { type: "string", short: "n" },
 	"ollama-base-url": { type: "string" },
 	"openai-model": { type: "string", default: "gpt-4.1-nano" },
 	concurrency: { type: "string", default: "5" },
@@ -29,7 +30,9 @@ Environment Variables:
   OPENAI_API_KEY       (Required) OpenAI API key
   OPENAI_MODEL         (Optional) OpenAI model name (defaults to gpt-4.1-nano)
 Options:
-  -s, --source-dir <path>      Path to source markdown files (default: ./source-files)
+
+      --ndjson-files <path>    Path to NDJSON files (mutually exclusive with --markdown-files)
+  -m, --markdown-files <path>      Path to source markdown files
       --ollama-base-url <url>  Ollama base URL (overrides env var)
       --ollama-model <model>   Ollama model name (overrides env var)
       --concurrency <number>   Max concurrent operations (default: 5)
@@ -63,6 +66,24 @@ async function main() {
 	}
 
 	console.log("Validating arguments and environment variables...");
+
+	// --- Add Validation for markdown/ndjson files ---
+	const markdownFilesPath = values["markdown-files"];
+	const ndjsonFilesPath = values["ndjson-files"];
+
+	if (!markdownFilesPath && !ndjsonFilesPath) {
+		console.error(
+			"Error: Either --markdown-files or --ndjson-files must be specified.",
+		);
+		printHelp();
+	}
+	if (markdownFilesPath && ndjsonFilesPath) {
+		console.error(
+			"Error: --markdown-files and --ndjson-files are mutually exclusive.",
+		);
+		printHelp();
+	}
+	// --- End Validation ---
 
 	const supabaseUrl = process.env["SUPABASE_URL"] ?? "http://localhost:54321";
 	const supabaseServiceRoleKey = process.env["SUPABASE_SERVICE_ROLE_KEY"];
@@ -118,9 +139,10 @@ async function main() {
 		}
 		supabase = createSupabaseClient({ supabaseUrl, supabaseServiceRoleKey });
 		console.log("Testing Supabase connection...");
-		const { error: testError } = await supabase
+		const { data, error: testError } = await supabase
 			.from("links")
 			.select("id", { count: "exact", head: true });
+		console.info({ data, error: testError });
 		if (testError && testError.code !== "42P01") {
 			throw new Error(`Supabase connection test failed: ${testError.message}`);
 		}
@@ -135,8 +157,18 @@ async function main() {
 	if (!values["skip-extraction"]) {
 		console.log("Starting link extraction...");
 		try {
-			await extractLinks({ sourceDir: values["source-dir"]!, supabase });
-			console.log("Link extraction completed.");
+			// Determine mode and path based on validated flags
+			const isMarkdownMode = !!markdownFilesPath; // Use the variable defined in the validation block
+			const sourcePath = (
+				isMarkdownMode ? markdownFilesPath : ndjsonFilesPath
+			)!; // One must exist due to validation
+
+			await extractLinks({
+				sourceDir: sourcePath, // Use the unified path variable
+				supabase,
+				isMarkdownMode,
+			});
+			console.info("Link extraction completed.");
 		} catch (error: any) {
 			console.error(`Error during link extraction: ${error.message}`);
 		}
